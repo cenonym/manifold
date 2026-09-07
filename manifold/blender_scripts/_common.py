@@ -17,8 +17,7 @@ def override(obj):
     return bpy.context.temp_override(object=obj, active_object=obj, selected_objects=[obj], selected_editable_objects=[obj])
 
 
-def import_obj(path):
-    bpy.ops.wm.obj_import(filepath=path)
+def join_meshes(path):
     meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
     if not meshes:
         raise RuntimeError(f"no mesh in {path}")
@@ -31,6 +30,11 @@ def import_obj(path):
     obj = bpy.context.view_layer.objects.active
     obj.select_set(True)
     return obj
+
+
+def import_obj(path):
+    bpy.ops.wm.obj_import(filepath=path)
+    return join_meshes(path)
 
 
 def apply_modifier(obj, mod):

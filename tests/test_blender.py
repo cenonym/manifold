@@ -1,4 +1,5 @@
 import json
+import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -19,7 +20,7 @@ def cfg(tmp_path):
 
 
 def test_scripts_exist():
-    for s in ["decimate.py", "finish.py", "export.py"]:
+    for s in ["decimate.py", "finish.py", "export.py", "convert.py"]:
         assert (SCRIPTS / s).is_file()
 
 
@@ -69,4 +70,45 @@ def test_script_error_surfaces(cfg, tmp_path):
     out = tmp_path / "out.obj"
     with pytest.raises(Exception) as e:
         run_blender(cfg, "decimate.py", [str(tmp_path / "missing.obj"), str(out)], {}, expect=out)
+    assert "blender" in str(e.value)
+
+
+def _make_glb(tmp_path):
+    glb = tmp_path / "cube.glb"
+    expr = (
+        "import bpy; bpy.ops.wm.read_factory_settings(use_empty=True); "
+        f"bpy.ops.wm.obj_import(filepath={str(CUBE)!r}); "
+        f"bpy.ops.export_scene.gltf(filepath={str(glb)!r}, export_format='GLB')"
+    )
+    subprocess.run(
+        [str(BLENDER), "--background", "--factory-startup", "--python-exit-code", "1", "--python-expr", expr],
+        check=True, capture_output=True,
+    )
+    return glb
+
+
+def test_convert_glb_roundtrip(cfg, tmp_path):
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "convert.py", [str(_make_glb(tmp_path)), str(out)], {}, expect=out)
+    v, f = read_obj(out)
+    assert len(v) == 8
+    assert face_stats(f) == {"faces": 12, "tris": 12, "quads": 0, "ngons": 0}
+    assert np.allclose(v.min(axis=0), 0.0, atol=1e-4)
+    assert np.allclose(v.max(axis=0), 1.0, atol=1e-4)
+
+
+def test_convert_obj_keeps_quads(cfg, tmp_path):
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "convert.py", [str(CUBE), str(out)], {}, expect=out)
+    v, f = read_obj(out)
+    assert len(v) == 8
+    assert face_stats(f)["quads"] == 6
+
+
+def test_convert_unknown_extension_errors(cfg, tmp_path):
+    src = tmp_path / "thing.xyz"
+    src.write_text("nope")
+    out = tmp_path / "out.obj"
+    with pytest.raises(Exception) as e:
+        run_blender(cfg, "convert.py", [str(src), str(out)], {}, expect=out)
     assert "blender" in str(e.value)
