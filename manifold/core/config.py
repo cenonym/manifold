@@ -16,6 +16,7 @@ class Config:
     autoremesher: Path
     output_root: Path
     mps_int8_bf16: bool = True
+    mps_hashmap_sort: bool = True
 
 
 def config_path() -> Path:
@@ -34,6 +35,7 @@ def load_config(path: Path | None = None) -> Config:
             autoremesher=Path(data["tools"]["autoremesher"]).expanduser(),
             output_root=Path(data["paths"]["output_root"]).expanduser(),
             mps_int8_bf16=bool(data.get("compat", {}).get("mps_int8_bf16", True)),
+            mps_hashmap_sort=bool(data.get("compat", {}).get("mps_hashmap_sort", True)),
         )
     except KeyError as e:
         raise ConfigError(f"{path}: missing key {e.args[0]}") from e

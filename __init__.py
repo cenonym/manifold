@@ -17,13 +17,17 @@ class ManifoldExtension(ComfyExtension):
 async def comfy_entrypoint() -> ManifoldExtension:
     purge_workdirs()
     try:
-        from .manifold.compat.mps_int8 import install
+        from .manifold.compat.mps_hashmap import install as install_hashmap
+        from .manifold.compat.mps_int8 import install as install_int8
         from .manifold.core.config import load_config
 
-        if load_config().mps_int8_bf16:
-            install()
+        cfg = load_config()
+        if cfg.mps_int8_bf16:
+            install_int8()
+        if cfg.mps_hashmap_sort:
+            install_hashmap()
     except ConfigError:
         pass
     except Exception:
-        logging.exception("manifold: mps int8 shim not installed")
+        logging.exception("manifold: mps shims not installed")
     return ManifoldExtension()

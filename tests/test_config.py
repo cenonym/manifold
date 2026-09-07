@@ -59,3 +59,12 @@ def test_mps_int8_bf16_defaults_true(tmp_path):
 def test_mps_int8_bf16_reads_false(tmp_path):
     body = GOOD + "\n[compat]\nmps_int8_bf16 = false\n"
     assert load_config(write(tmp_path, body)).mps_int8_bf16 is False
+
+
+def test_mps_hashmap_sort_defaults_true(tmp_path):
+    assert load_config(write(tmp_path, GOOD)).mps_hashmap_sort is True
+
+
+def test_mps_hashmap_sort_reads_false(tmp_path):
+    body = GOOD + "\n[compat]\nmps_hashmap_sort = false\n"
+    assert load_config(write(tmp_path, body)).mps_hashmap_sort is False
