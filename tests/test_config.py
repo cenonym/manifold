@@ -50,3 +50,12 @@ def test_require_tool(tmp_path):
     assert require_tool(cfg, "blender") == Path("/bin/ls")
     with pytest.raises(ConfigError, match="tools.autoremesher"):
         require_tool(cfg, "autoremesher")
+
+
+def test_mps_int8_bf16_defaults_true(tmp_path):
+    assert load_config(write(tmp_path, GOOD)).mps_int8_bf16 is True
+
+
+def test_mps_int8_bf16_reads_false(tmp_path):
+    body = GOOD + "\n[compat]\nmps_int8_bf16 = false\n"
+    assert load_config(write(tmp_path, body)).mps_int8_bf16 is False

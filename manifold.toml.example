@@ -4,3 +4,6 @@ autoremesher = "/Applications/autoremesher.app/Contents/MacOS/autoremesher"
 
 [paths]
 output_root = "~/Assets/manifold"
+
+[compat]
+mps_int8_bf16 = true

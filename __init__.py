@@ -1,6 +1,9 @@
+import logging
+
 from comfy_api.latest import IO, ComfyExtension
 from typing_extensions import override
 
+from .manifold.core.config import ConfigError
 from .manifold.core.workdir import purge_workdirs
 from .manifold.nodes import load_nodes
 
@@ -13,4 +16,14 @@ class ManifoldExtension(ComfyExtension):
 
 async def comfy_entrypoint() -> ManifoldExtension:
     purge_workdirs()
+    try:
+        from .manifold.compat.mps_int8 import install
+        from .manifold.core.config import load_config
+
+        if load_config().mps_int8_bf16:
+            install()
+    except ConfigError:
+        pass
+    except Exception:
+        logging.exception("manifold: mps int8 shim not installed")
     return ManifoldExtension()
