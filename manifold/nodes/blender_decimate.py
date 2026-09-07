@@ -19,12 +19,13 @@ class BlenderDecimate(IO.ComfyNode):
                 IO.Combo.Input("mode", options=["planar", "collapse"], default="planar"),
                 IO.Float.Input("angle", default=5.0, min=0.0, max=90.0, step=0.5, tooltip="planar: dissolve angle in degrees"),
                 IO.Float.Input("ratio", default=0.5, min=0.01, max=1.0, step=0.01, tooltip="collapse: kept face ratio"),
+                IO.Int.Input("target_faces", default=0, min=0, max=5_000_000, step=1000, tooltip="collapse: face count, 0 uses ratio"),
             ],
             outputs=[ManifoldMesh.Output(display_name="mesh"), IO.Mesh.Output(display_name="preview")],
         )
 
     @classmethod
-    def execute(cls, mesh, mode, angle, ratio) -> IO.NodeOutput:
+    def execute(cls, mesh, mode, angle, ratio, target_faces) -> IO.NodeOutput:
         out = new_workdir("decimate") / "decimate.obj"
-        run_blender(load_config(), "decimate.py", [mesh, str(out)], {"mode": mode, "angle": angle, "ratio": ratio}, expect=out)
+        run_blender(load_config(), "decimate.py", [mesh, str(out)], {"mode": mode, "angle": angle, "ratio": ratio, "target_faces": target_faces}, expect=out)
         return IO.NodeOutput(str(out), preview_mesh(out))

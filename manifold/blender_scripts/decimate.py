@@ -15,6 +15,11 @@ if p.get("mode", "planar") == "planar":
     mod.angle_limit = math.radians(float(p.get("angle", 5.0)))
 else:
     mod.decimate_type = "COLLAPSE"
-    mod.ratio = float(p.get("ratio", 0.5))
+    target = int(p.get("target_faces", 0))
+    tris = sum(len(poly.vertices) - 2 for poly in obj.data.polygons)
+    if target > 0 and tris > 0:
+        mod.ratio = min(1.0, target / tris)
+    else:
+        mod.ratio = float(p.get("ratio", 0.5))
 apply_modifier(obj, mod)
 export_obj(obj, dst)
