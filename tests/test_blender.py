@@ -35,6 +35,48 @@ def test_decimate_collapse_reduces(cfg, tmp_path):
     assert 0 < len(f) < 12
 
 
+def _tris(faces):
+    return sum(len(f) - 2 for f in faces)
+
+
+def _subdivided_cube(cfg, tmp_path):
+    out = tmp_path / "subcube.obj"
+    expr = (
+        "import bpy;"
+        "bpy.ops.wm.read_factory_settings(use_empty=True);"
+        "bpy.ops.mesh.primitive_cube_add(size=2);"
+        "bpy.ops.object.mode_set(mode='EDIT');"
+        "bpy.ops.mesh.select_all(action='SELECT');"
+        "bpy.ops.mesh.subdivide(number_cuts=2);"
+        "bpy.ops.object.mode_set(mode='OBJECT');"
+        f"bpy.ops.wm.obj_export(filepath={str(out)!r}, export_materials=False, export_normals=False)"
+    )
+    subprocess.run([str(cfg.blender), "-b", "--python-expr", expr], check=True, capture_output=True)
+    return out
+
+
+def test_decimate_collapse_target_faces(cfg, tmp_path):
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "decimate.py", [str(CUBE), str(out)], {"mode": "collapse", "ratio": 1.0, "target_faces": 6}, expect=out)
+    _, f = read_obj(out)
+    assert 0 < _tris(f) <= 8
+
+
+def test_decimate_collapse_target_faces_subdivided(cfg, tmp_path):
+    src = _subdivided_cube(cfg, tmp_path)
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "decimate.py", [str(src), str(out)], {"mode": "collapse", "ratio": 1.0, "target_faces": 40}, expect=out)
+    _, f = read_obj(out)
+    assert 30 <= _tris(f) <= 50
+
+
+def test_decimate_collapse_target_faces_zero_uses_ratio(cfg, tmp_path):
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "decimate.py", [str(CUBE), str(out)], {"mode": "collapse", "ratio": 0.5, "target_faces": 0}, expect=out)
+    _, f = read_obj(out)
+    assert 0 < len(f) < 12
+
+
 def test_decimate_planar_keeps_cube(cfg, tmp_path):
     out = tmp_path / "out.obj"
     run_blender(cfg, "decimate.py", [str(CUBE), str(out)], {"mode": "planar", "angle": 5.0}, expect=out)
@@ -112,3 +154,58 @@ def test_convert_unknown_extension_errors(cfg, tmp_path):
     with pytest.raises(Exception) as e:
         run_blender(cfg, "convert.py", [str(src), str(out)], {}, expect=out)
     assert "blender" in str(e.value)
+
+
+def _closed(faces):
+    directed = set()
+    for face in faces:
+        for i in range(len(face)):
+            directed.add((face[i], face[(i + 1) % len(face)]))
+    return all((b, a) in directed for a, b in directed)
+
+
+def test_clean_cube_is_closed(cfg, tmp_path):
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "clean.py", [str(CUBE), str(out)], {"voxel_divisions": 32, "min_component": 0.01, "smooth": 0}, expect=out)
+    v, f = read_obj(out)
+    assert _closed(f)
+    size = v.max(axis=0) - v.min(axis=0)
+    assert np.allclose(size, 1.0, rtol=0.1)
+
+
+def _cube_plus_speck(cfg, tmp_path):
+    out = tmp_path / "speck.obj"
+    expr = (
+        "import bpy;"
+        "bpy.ops.wm.read_factory_settings(use_empty=True);"
+        "bpy.ops.mesh.primitive_cube_add(size=1, location=(0,0,0));"
+        "bpy.ops.mesh.primitive_cube_add(size=0.05, location=(3,0,0));"
+        f"bpy.ops.wm.obj_export(filepath={str(out)!r}, export_materials=False, export_normals=False)"
+    )
+    subprocess.run([str(cfg.blender), "-b", "--python-expr", expr], check=True, capture_output=True)
+    return out
+
+
+def test_clean_drops_small_component(cfg, tmp_path):
+    src = _cube_plus_speck(cfg, tmp_path)
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_divisions": 400, "min_component": 0.01, "smooth": 0}, expect=out)
+    v, _ = read_obj(out)
+    assert v[:, 0].max() < 1.0
+
+
+def test_clean_min_component_zero_keeps_both(cfg, tmp_path):
+    src = _cube_plus_speck(cfg, tmp_path)
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_divisions": 400, "min_component": 0.0, "smooth": 0}, expect=out)
+    v, _ = read_obj(out)
+    assert v[:, 0].max() > 2.0
+
+
+def test_clean_min_component_one_keeps_largest_only(cfg, tmp_path):
+    src = _cube_plus_speck(cfg, tmp_path)
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_divisions": 400, "min_component": 1.0, "smooth": 0}, expect=out)
+    v, f = read_obj(out)
+    assert v[:, 0].max() < 1.0
+    assert _closed(f)
