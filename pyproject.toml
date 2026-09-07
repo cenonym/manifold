@@ -1,0 +1,13 @@
+[project]
+name = "manifold"
+version = "0.1.0"
+description = "ComfyUI nodes for clean game-ready topology from image-to-3D meshes"
+requires-python = ">=3.11"
+dependencies = ["numpy"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

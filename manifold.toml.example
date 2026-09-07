@@ -1,0 +1,6 @@
+[tools]
+blender = "/Applications/Blender.app/Contents/MacOS/Blender"
+autoremesher = "/Applications/autoremesher.app/Contents/MacOS/autoremesher"
+
+[paths]
+output_root = "~/Assets/manifold"
