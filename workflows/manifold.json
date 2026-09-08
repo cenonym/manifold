@@ -748,12 +748,20 @@
             "steps"
           ],
           [
+            "3",
+            "cfg"
+          ],
+          [
             "18",
             "seed"
           ],
           [
             "18",
             "steps"
+          ],
+          [
+            "18",
+            "cfg"
           ]
         ],
         "cnr_id": "comfy-core",
