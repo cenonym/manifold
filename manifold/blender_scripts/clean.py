@@ -95,7 +95,7 @@ if solidify > 0:
 
 mod = obj.modifiers.new("voxel", "REMESH")
 mod.mode = "VOXEL"
-mod.voxel_size = float(p.get("voxel_scale", 2.5)) * edge
+mod.voxel_size = float(p.get("voxel_scale", 3.0)) * edge
 mod.use_remove_disconnected = False
 apply_modifier(obj, mod)
 

@@ -16,7 +16,7 @@ class BlenderClean(IO.ComfyNode):
             description="Voxel remesh to a closed manifold surface, then drop loose parts and optionally smooth.",
             inputs=[
                 ManifoldMesh.Input("mesh"),
-                IO.Float.Input("voxel_scale", default=2.5, min=1.0, max=8.0, step=0.1, tooltip="voxel size as a multiple of the median edge length; below about 1.8 the double shell splits, larger smooths"),
+                IO.Float.Input("voxel_scale", default=3.0, min=1.0, max=8.0, step=0.1, tooltip="voxel size as a multiple of the median edge length; the double shell splits below about 2.8, larger smooths"),
                 IO.Float.Input("min_component", default=0.01, min=0.0, max=1.0, step=0.005, tooltip="drop parts smaller than this fraction of the largest"),
                 IO.Int.Input("smooth", default=0, min=0, max=20),
                 IO.Float.Input("solidify", default=1.5, min=0.0, max=4.0, step=0.1, tooltip="thickness as a multiple of the median edge length before remeshing, closes open sheets, 0 off"),
