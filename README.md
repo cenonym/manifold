@@ -18,3 +18,5 @@ On Apple Silicon two shims patch ComfyUI at load (int8 weights to bf16, TRELLIS 
 ## Test
 
 `./scripts/test.sh`
+
+`scripts/subgraphify.py` rebuilds `workflows/manifold.json` from `workflows/manifold-flat.json`; edit the flat file, then rerun it.
