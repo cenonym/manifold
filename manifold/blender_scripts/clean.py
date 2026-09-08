@@ -2,9 +2,27 @@ import os
 import sys
 from array import array
 
+import numpy as np
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from _common import apply_modifier, args, clear_scene, export_obj, import_obj
+import bpy
+
+from _common import apply_modifier, args, clear_scene, export_obj, import_obj, override
+
+
+def median_edge(me, src):
+    if not len(me.edges):
+        raise RuntimeError(f"{src}: no usable edges")
+    idx = np.empty(len(me.edges) * 2, dtype=np.int32)
+    me.edges.foreach_get("vertices", idx)
+    co = np.empty(len(me.vertices) * 3, dtype=np.float64)
+    me.vertices.foreach_get("co", co)
+    co = co.reshape(-1, 3)[idx.reshape(-1, 2)]
+    edge = float(np.median(np.linalg.norm(co[:, 0] - co[:, 1], axis=1)))
+    if not np.isfinite(edge) or edge <= 0:
+        raise RuntimeError(f"{src}: no usable edges")
+    return edge
 
 
 def components(me):
@@ -59,12 +77,25 @@ def drop_small(obj, min_component):
 clear_scene()
 obj = import_obj(src)
 
-dims = obj.dimensions
-longest = max(dims[0], dims[1], dims[2])
-divisions = max(1, int(p.get("voxel_divisions", 216)))
+with override(obj):
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.mesh.remove_doubles(threshold=1e-5)
+    bpy.ops.object.mode_set(mode="OBJECT")
+
+edge = median_edge(obj.data, src)
+
+solidify = float(p.get("solidify", 0.0))
+if solidify > 0:
+    mod = obj.modifiers.new("solidify", "SOLIDIFY")
+    mod.offset = 0
+    mod.thickness = solidify * edge
+    mod.use_even_offset = False
+    apply_modifier(obj, mod)
+
 mod = obj.modifiers.new("voxel", "REMESH")
 mod.mode = "VOXEL"
-mod.voxel_size = longest / divisions
+mod.voxel_size = float(p.get("voxel_scale", 2.5)) * edge
 mod.use_remove_disconnected = False
 apply_modifier(obj, mod)
 

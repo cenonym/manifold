@@ -166,7 +166,7 @@ def _closed(faces):
 
 def test_clean_cube_is_closed(cfg, tmp_path):
     out = tmp_path / "out.obj"
-    run_blender(cfg, "clean.py", [str(CUBE), str(out)], {"voxel_divisions": 32, "min_component": 0.01, "smooth": 0}, expect=out)
+    run_blender(cfg, "clean.py", [str(CUBE), str(out)], {"voxel_scale": 0.03, "solidify": 0, "min_component": 0.01, "smooth": 0}, expect=out)
     v, f = read_obj(out)
     assert _closed(f)
     size = v.max(axis=0) - v.min(axis=0)
@@ -189,7 +189,7 @@ def _cube_plus_speck(cfg, tmp_path):
 def test_clean_drops_small_component(cfg, tmp_path):
     src = _cube_plus_speck(cfg, tmp_path)
     out = tmp_path / "out.obj"
-    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_divisions": 400, "min_component": 0.01, "smooth": 0}, expect=out)
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_scale": 0.03, "solidify": 0, "min_component": 0.01, "smooth": 0}, expect=out)
     v, _ = read_obj(out)
     assert v[:, 0].max() < 1.0
 
@@ -197,7 +197,7 @@ def test_clean_drops_small_component(cfg, tmp_path):
 def test_clean_min_component_zero_keeps_both(cfg, tmp_path):
     src = _cube_plus_speck(cfg, tmp_path)
     out = tmp_path / "out.obj"
-    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_divisions": 400, "min_component": 0.0, "smooth": 0}, expect=out)
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_scale": 0.03, "solidify": 0, "min_component": 0.0, "smooth": 0}, expect=out)
     v, _ = read_obj(out)
     assert v[:, 0].max() > 2.0
 
@@ -205,7 +205,85 @@ def test_clean_min_component_zero_keeps_both(cfg, tmp_path):
 def test_clean_min_component_one_keeps_largest_only(cfg, tmp_path):
     src = _cube_plus_speck(cfg, tmp_path)
     out = tmp_path / "out.obj"
-    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_divisions": 400, "min_component": 1.0, "smooth": 0}, expect=out)
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_scale": 0.03, "solidify": 0, "min_component": 1.0, "smooth": 0}, expect=out)
     v, f = read_obj(out)
     assert v[:, 0].max() < 1.0
     assert _closed(f)
+
+
+def _open_sheet(cfg, tmp_path):
+    out = tmp_path / "sheet.obj"
+    expr = (
+        "import bpy;"
+        "bpy.ops.wm.read_factory_settings(use_empty=True);"
+        "bpy.ops.mesh.primitive_plane_add(size=1);"
+        "bpy.ops.object.mode_set(mode='EDIT');"
+        "bpy.ops.mesh.select_all(action='SELECT');"
+        "bpy.ops.mesh.subdivide(number_cuts=9);"
+        "bpy.ops.object.mode_set(mode='OBJECT');"
+        f"bpy.ops.wm.obj_export(filepath={str(out)!r}, export_materials=False, export_normals=False)"
+    )
+    subprocess.run([str(cfg.blender), "-b", "--python-expr", expr], check=True, capture_output=True)
+    return out
+
+
+def _boundary_edges(faces):
+    counts = {}
+    for face in faces:
+        for i in range(len(face)):
+            a, b = face[i], face[(i + 1) % len(face)]
+            key = (a, b) if a < b else (b, a)
+            counts[key] = counts.get(key, 0) + 1
+    return sum(1 for n in counts.values() if n == 1)
+
+
+def test_clean_open_sheet_without_solidify_stays_open(cfg, tmp_path):
+    src = _open_sheet(cfg, tmp_path)
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_scale": 2.5, "solidify": 0, "min_component": 0.01}, expect=out)
+    v, f = read_obj(out)
+    assert len(f) < 8 or _boundary_edges(f) > 0 or (v.max(axis=0) - v.min(axis=0))[1] < 1e-4
+
+
+def test_clean_open_sheet_solidify_closes(cfg, tmp_path):
+    src = _open_sheet(cfg, tmp_path)
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_scale": 2.5, "solidify": 1.5, "min_component": 0.01}, expect=out)
+    v, f = read_obj(out)
+    assert _boundary_edges(f) == 0
+    assert _closed(f)
+    thickness = (v.max(axis=0) - v.min(axis=0))[1]
+    assert 0.05 < thickness < 0.4
+
+
+def _doubled_cube(tmp_path):
+    v, f = read_obj(CUBE)
+    out = tmp_path / "doubled.obj"
+    lines = []
+    for _ in range(2):
+        for x, y, z in v:
+            lines.append(f"v {x} {y} {z}")
+    n = len(v)
+    for off in (0, n):
+        for face in f:
+            lines.append("f " + " ".join(str(i + 1 + off) for i in face))
+    out.write_text("\n".join(lines) + "\n")
+    return out
+
+
+def test_clean_welds_duplicate_vertices(cfg, tmp_path):
+    src = _doubled_cube(tmp_path)
+    out = tmp_path / "out.obj"
+    run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_scale": 0.03, "solidify": 0, "min_component": 0.01}, expect=out)
+    _, f = read_obj(out)
+    assert _closed(f)
+    assert _boundary_edges(f) == 0
+
+
+def test_clean_edgeless_mesh_errors(cfg, tmp_path):
+    src = tmp_path / "points.obj"
+    src.write_text("v 0 0 0\nv 1 0 0\nv 0 1 0\n")
+    out = tmp_path / "out.obj"
+    with pytest.raises(Exception) as e:
+        run_blender(cfg, "clean.py", [str(src), str(out)], {"voxel_scale": 2.5, "solidify": 0, "min_component": 0.01}, expect=out)
+    assert "blender" in str(e.value)
