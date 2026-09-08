@@ -93,11 +93,13 @@ if solidify > 0:
     mod.use_even_offset = False
     apply_modifier(obj, mod)
 
+voxel = float(p.get("voxel_scale", 5.5)) * edge
 mod = obj.modifiers.new("voxel", "REMESH")
 mod.mode = "VOXEL"
-mod.voxel_size = float(p.get("voxel_scale", 3.0)) * edge
+mod.voxel_size = voxel
 mod.use_remove_disconnected = False
 apply_modifier(obj, mod)
+print(f"clean: edge {edge:.6f} voxel {voxel:.6f} faces {len(obj.data.polygons)}")
 
 min_component = float(p.get("min_component", 0.01))
 if min_component > 0:
