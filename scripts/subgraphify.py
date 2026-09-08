@@ -20,25 +20,38 @@ REMOVE_BG_ID = 500
 
 TOP_LEVEL_KEEP = {122, 316, REMOVE_BG_ID, 246, 330, 332, 405}
 
-SOURCE = [193, 192, 248, 303, 312, 302, 55, 56, 242, 15, 298, 299, 420, 421, 422]
-GENERATE = [319, 40, 318, 314, 315, 199, 279, 125, 126, 108, 87, 3, 119, 117,
+SOURCE = [193, 192, 248, 303, 312, 302, 55, 56, 242, 15, 298, 299, 420, 421,
+          422, 314, 315]
+GENERATE = [319, 40, 318, 199, 279, 125, 126, 108, 87, 3, 119, 117,
             4, 247, 91, 18, 92, 202, 400]
 RETOPO = [324, 402, 403, 401, 325, 326, 327, 328, 333, 329, 331, 334, 404,
-          423, 424, 425, 426, 427, 428]
+          426, 427, 428]
 
 GROUPS = [("Source", SOURCE), ("Generate", GENERATE), ("Retopo", RETOPO)]
 
 PROMOTED = {
     "Source": [],
-    "Generate": [(3, "seed"), (3, "steps"), (3, "cfg"),
-                 (18, "seed"), (18, "steps"), (18, "cfg")],
-    "Retopo": [(325, "target_quads"), (334, "name")],
+    "Generate": [],
+    "Retopo": [],
+}
+
+WIDGET_INPUTS = {
+    "Generate": [
+        ("seed", "INT", 56, [(3, "seed"), (18, "seed")]),
+        ("cfg", "FLOAT", 7.5, [(3, "cfg"), (18, "cfg")]),
+        ("structure_steps", "INT", 12, [(3, "steps")]),
+        ("shape_steps", "INT", 12, [(18, "steps")]),
+    ],
+    "Retopo": [
+        ("target_quads", "INT", 5000, [(325, "target_quads")]),
+        ("name", "STRING", "asset", [(334, "name")]),
+    ],
 }
 
 TUNE = [
+    (18, "seed", 56),
     (18, "steps", 12),
-    (423, "value", 3.0),
-    (403, "voxel_scale", 3.0),
+    (403, "voxel_scale", 5.5),
 ]
 
 INPUT_NAMES = {
@@ -47,18 +60,14 @@ INPUT_NAMES = {
     ("Source", 316, 0): "use_trellis",
     ("Source", 500, 0): "remove_background",
     ("Generate", 316, 0): "use_trellis",
-    ("Generate", 298, 0): "pixal3d_positive",
-    ("Generate", 299, 0): "trellis_positive",
-    ("Generate", 298, 1): "pixal3d_negative",
-    ("Generate", 299, 1): "trellis_negative",
+    ("Generate", 314, 0): "positive",
+    ("Generate", 315, 0): "negative",
     ("Retopo", 316, 0): "use_trellis",
     ("Retopo", 122, 0): "source_image",
 }
 OUTPUT_NAMES = {
-    ("Source", 298, 0): "pixal3d_positive",
-    ("Source", 298, 1): "pixal3d_negative",
-    ("Source", 299, 0): "trellis_positive",
-    ("Source", 299, 1): "trellis_negative",
+    ("Source", 314, 0): "positive",
+    ("Source", 315, 0): "negative",
     ("Generate", 247, 0): "voxel_preview",
     ("Generate", 400, 0): "mesh",
     ("Retopo", 404, 0): "clean_preview",
@@ -201,6 +210,8 @@ def build(src):
         inner_by_id = {n["id"]: n for n in inner_nodes}
 
         sg_links = []
+        next_sg_link = max([l[0] for l in p["inner"]] +
+                           [l[0] for l in p["bnd_in"]] + [0]) + 1
         for l in p["inner"]:
             sg_links.append(dict(id=l[0], origin_id=l[1], origin_slot=l[2],
                                  target_id=l[3], target_slot=l[4], type=l[5]))
@@ -252,6 +263,43 @@ def build(src):
             out = inner_by_id[oid]["outputs"][oslot]
             out["links"] = (out.get("links") or []) + [lid]
 
+        widget_slots = []
+        for idx, si in enumerate(sg_inputs):
+            tgt = [(l["target_id"], l["target_slot"]) for l in sg_links
+                   if l["origin_id"] == -10 and l["origin_slot"] == idx]
+            wi = next((inner_by_id[t]["inputs"][ts] for t, ts in tgt
+                       if inner_by_id[t]["inputs"][ts].get("widget")), None)
+            if wi is None:
+                continue
+            t, ts = next((t, ts) for t, ts in tgt
+                         if inner_by_id[t]["inputs"][ts].get("widget"))
+            cur = widget_items(inner_by_id[t]).get(wi["name"])
+            widget_slots.append((si["name"], si["type"], cur, False))
+
+        widget_defaults = []
+        for wname, wtype, default, targets in WIDGET_INPUTS.get(name, []):
+            idx = len(sg_inputs)
+            link_ids = []
+            for nid, iname in targets:
+                n = inner_by_id[nid]
+                if iname not in widget_names(n):
+                    raise SystemExit(f"{name}: node {nid} has no widget {iname}")
+                set_widget(n, iname, default)
+                slot = len(n.setdefault("inputs", []))
+                n["inputs"].append(dict(name=iname, type=wtype,
+                                        widget={"name": iname}, link=next_sg_link,
+                                        localized_name=iname))
+                link_ids.append(next_sg_link)
+                sg_links.append(dict(id=next_sg_link, origin_id=-10,
+                                     origin_slot=idx, target_id=nid,
+                                     target_slot=slot, type=wtype))
+                next_sg_link += 1
+            sg_inputs.append(dict(id=uid(name, "in", idx), name=wname, type=wtype,
+                                  linkIds=link_ids, localized_name=wname,
+                                  pos=[-100, 40 + idx * 20]))
+            widget_defaults.append((wname, wtype, default))
+            widget_slots.append((wname, wtype, default, True))
+
         defs.append(dict(
             id=sg_id, version=1,
             state=dict(lastGroupId=0,
@@ -274,10 +322,13 @@ def build(src):
         inst = dict(
             id=next_node, type=sg_id, pos=INSTANCE_POS[name], size=[340, 400],
             flags={}, mode=0,
-            inputs=[dict(name=s["name"], type=s["type"], link=None) for s in sg_inputs],
+            inputs=([dict(name=s["name"], type=s["type"], link=None)
+                     for s in sg_inputs[:len(sg_inputs) - len(widget_defaults)]] +
+                    [dict(name=w, type=t, widget={"name": w}, link=None)
+                     for w, t, _ in widget_defaults]),
             outputs=[dict(name=s["name"], type=s["type"], links=[]) for s in sg_outputs],
             properties=dict(proxyWidgets=proxy, cnr_id="comfy-core", ver="0.34.5"),
-            widgets_values=[])
+            widgets_values=[v for _, _, v, _ in widget_slots])
         next_node += 1
         instances[name] = inst
         p["instance"] = inst
@@ -474,6 +525,19 @@ def flatten(wf):
         def expand(inst, pfx):
             d = defs[inst["type"]]
             bin_ = {}
+            wv = inst.get("widgets_values") or []
+            dby = {n["id"]: n for n in d["nodes"]}
+            slot = {}
+            for di in range(len(d["inputs"])):
+                tgt = [(l["target_id"], l["target_slot"]) for l in d["links"]
+                       if l["origin_id"] == -10 and l["origin_slot"] == di]
+                if any(dby[t]["inputs"][ts].get("widget") for t, ts in tgt):
+                    slot[di] = len(slot)
+            linked = {i for i, inp in enumerate(inst.get("inputs", []))
+                      if inp.get("link") is not None}
+            for di, si in slot.items():
+                if di not in linked and si < len(wv):
+                    bin_[di] = ("<literal>", wv[si])
             for i, inp in enumerate(inst.get("inputs", [])):
                 if inp.get("link") is None:
                     continue
@@ -498,7 +562,8 @@ def flatten(wf):
                 if inp.get("link") is None:
                     continue
                 o, os_, _, _, _ = lby[inp["link"]]
-                ins[inp["name"]] = list(res_out(o, os_))
+                r = res_out(o, os_)
+                ins[inp["name"]] = r[1] if r[0] == "<literal>" else list(r)
             out_collect[gid] = dict(class_type=n["type"], inputs=ins)
 
         res = {}

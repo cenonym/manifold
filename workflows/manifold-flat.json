@@ -1376,7 +1376,7 @@
         "Node name for S&R": "KSampler (512)"
       },
       "widgets_values": [
-        42,
+        56,
         "fixed",
         12,
         7.5,
@@ -1385,7 +1385,7 @@
         1
       ],
       "widgets_values_named": {
-        "seed": 42,
+        "seed": 56,
         "control_after_generate": "fixed",
         "steps": 12,
         "cfg": 7.5,
@@ -2140,14 +2140,6 @@
           "link": 53
         },
         {
-          "name": "voxel_scale",
-          "type": "FLOAT",
-          "widget": {
-            "name": "voxel_scale"
-          },
-          "link": 81
-        },
-        {
           "name": "solidify",
           "type": "FLOAT",
           "widget": {
@@ -2176,13 +2168,13 @@
         "Node name for S&R": "ManifoldBlenderClean"
       },
       "widgets_values": [
-        3.0,
+        5.5,
         0.01,
         0,
         0.0
       ],
       "widgets_values_named": {
-        "voxel_scale": 3.0,
+        "voxel_scale": 5.5,
         "min_component": 0.01,
         "smooth": 0,
         "solidify": 0.0
@@ -2414,7 +2406,6 @@
             58,
             59,
             76,
-            80,
             84
           ]
         }
@@ -2810,133 +2801,6 @@
         }
       ],
       "title": "Switch: pad factor",
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.33.0",
-        "Node name for S&R": "ComfySwitchNode"
-      },
-      "widgets_values": [
-        false
-      ],
-      "widgets_values_named": {
-        "switch": false
-      }
-    },
-    {
-      "id": 423,
-      "type": "PrimitiveFloat",
-      "pos": [
-        0,
-        1300
-      ],
-      "size": [
-        240,
-        60
-      ],
-      "flags": {},
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "FLOAT",
-          "type": "FLOAT",
-          "links": [
-            78
-          ]
-        }
-      ],
-      "title": "voxel scale: Pixal3D",
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.33.0",
-        "Node name for S&R": "PrimitiveFloat"
-      },
-      "widgets_values": [
-        3.0
-      ],
-      "widgets_values_named": {
-        "value": 3.0
-      }
-    },
-    {
-      "id": 424,
-      "type": "PrimitiveFloat",
-      "pos": [
-        0,
-        1420
-      ],
-      "size": [
-        240,
-        60
-      ],
-      "flags": {},
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "FLOAT",
-          "type": "FLOAT",
-          "links": [
-            79
-          ]
-        }
-      ],
-      "title": "voxel scale: TRELLIS.2",
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.33.0",
-        "Node name for S&R": "PrimitiveFloat"
-      },
-      "widgets_values": [
-        3.5
-      ],
-      "widgets_values_named": {
-        "value": 3.5
-      }
-    },
-    {
-      "id": 425,
-      "type": "ComfySwitchNode",
-      "pos": [
-        420,
-        1300
-      ],
-      "size": [
-        270,
-        110
-      ],
-      "flags": {},
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "on_false",
-          "type": "FLOAT",
-          "link": 78
-        },
-        {
-          "name": "on_true",
-          "type": "FLOAT",
-          "link": 79
-        },
-        {
-          "name": "switch",
-          "type": "BOOLEAN",
-          "widget": {
-            "name": "switch"
-          },
-          "link": 80
-        }
-      ],
-      "outputs": [
-        {
-          "name": "output",
-          "type": "FLOAT",
-          "links": [
-            81
-          ]
-        }
-      ],
-      "title": "Switch: voxel scale",
       "properties": {
         "cnr_id": "comfy-core",
         "ver": "0.33.0",
@@ -3647,38 +3511,6 @@
       "FLOAT"
     ],
     [
-      80,
-      316,
-      0,
-      425,
-      2,
-      "BOOLEAN"
-    ],
-    [
-      78,
-      423,
-      0,
-      425,
-      0,
-      "FLOAT"
-    ],
-    [
-      79,
-      424,
-      0,
-      425,
-      1,
-      "FLOAT"
-    ],
-    [
-      81,
-      425,
-      0,
-      403,
-      1,
-      "FLOAT"
-    ],
-    [
       84,
       316,
       0,
@@ -3707,7 +3539,7 @@
       428,
       0,
       403,
-      2,
+      1,
       "FLOAT"
     ]
   ],

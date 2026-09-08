@@ -2,7 +2,7 @@
   "id": "manifold",
   "revision": 0,
   "last_node_id": 503,
-  "last_link_id": 111,
+  "last_link_id": 107,
   "nodes": [
     {
       "id": 330,
@@ -20,7 +20,7 @@
         {
           "name": "model_3d",
           "type": "FILE_3D_GLB,FILE_3D_GLTF,FILE_3D_FBX,FILE_3D_OBJ,FILE_3D_STL,FILE_3D_USDZ,FILE_3D",
-          "link": 100
+          "link": 98
         },
         {
           "name": "model_3d_info",
@@ -91,7 +91,7 @@
         {
           "name": "model_3d",
           "type": "FILE_3D_GLB,FILE_3D_GLTF,FILE_3D_FBX,FILE_3D_OBJ,FILE_3D_STL,FILE_3D_USDZ,FILE_3D",
-          "link": 101
+          "link": 99
         },
         {
           "name": "model_3d_info",
@@ -165,7 +165,7 @@
           "name": "BOOLEAN",
           "type": "BOOLEAN",
           "links": [
-            111
+            107
           ]
         }
       ],
@@ -200,7 +200,7 @@
         {
           "name": "model_3d",
           "type": "FILE_3D_GLB,FILE_3D_GLTF,FILE_3D_FBX,FILE_3D_OBJ,FILE_3D_STL,FILE_3D_USDZ,FILE_3D",
-          "link": 103
+          "link": 101
         },
         {
           "name": "model_3d_info",
@@ -370,7 +370,7 @@
         {
           "name": "model_3d",
           "type": "FILE_3D_GLB,FILE_3D_GLTF,FILE_3D_FBX,FILE_3D_OBJ,FILE_3D_STL,FILE_3D_USDZ,FILE_3D",
-          "link": 98
+          "link": 96
         },
         {
           "name": "model_3d_info",
@@ -542,15 +542,15 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            96,
-            102
+            94,
+            100
           ]
         },
         {
           "name": "MASK",
           "type": "MASK",
           "links": [
-            97
+            95
           ]
         }
       ],
@@ -588,9 +588,9 @@
           "name": "BOOLEAN",
           "type": "BOOLEAN",
           "links": [
-            104,
-            109,
-            110
+            102,
+            103,
+            106
           ]
         }
       ],
@@ -626,51 +626,37 @@
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 96
+          "link": 94
         },
         {
           "name": "mask",
           "type": "MASK",
-          "link": 97
+          "link": 95
         },
         {
           "name": "use_trellis",
           "type": "BOOLEAN",
-          "link": 109
+          "link": 103
         },
         {
           "name": "remove_background",
           "type": "BOOLEAN",
-          "link": 111
+          "link": 107
         }
       ],
       "outputs": [
         {
-          "name": "pixal3d_positive",
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            104
+          ]
+        },
+        {
+          "name": "negative",
           "type": "CONDITIONING",
           "links": [
             105
-          ]
-        },
-        {
-          "name": "trellis_positive",
-          "type": "CONDITIONING",
-          "links": [
-            106
-          ]
-        },
-        {
-          "name": "pixal3d_negative",
-          "type": "CONDITIONING",
-          "links": [
-            107
-          ]
-        },
-        {
-          "name": "trellis_negative",
-          "type": "CONDITIONING",
-          "links": [
-            108
           ]
         }
       ],
@@ -679,7 +665,10 @@
         "cnr_id": "comfy-core",
         "ver": "0.34.5"
       },
-      "widgets_values": []
+      "widgets_values": [
+        false,
+        true
+      ]
     },
     {
       "id": 502,
@@ -698,27 +687,49 @@
         {
           "name": "use_trellis",
           "type": "BOOLEAN",
+          "link": 102
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
           "link": 104
         },
         {
-          "name": "pixal3d_positive",
+          "name": "negative",
           "type": "CONDITIONING",
           "link": 105
         },
         {
-          "name": "trellis_positive",
-          "type": "CONDITIONING",
-          "link": 106
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
         },
         {
-          "name": "pixal3d_negative",
-          "type": "CONDITIONING",
-          "link": 107
+          "name": "cfg",
+          "type": "FLOAT",
+          "widget": {
+            "name": "cfg"
+          },
+          "link": null
         },
         {
-          "name": "trellis_negative",
-          "type": "CONDITIONING",
-          "link": 108
+          "name": "structure_steps",
+          "type": "INT",
+          "widget": {
+            "name": "structure_steps"
+          },
+          "link": null
+        },
+        {
+          "name": "shape_steps",
+          "type": "INT",
+          "widget": {
+            "name": "shape_steps"
+          },
+          "link": null
         }
       ],
       "outputs": [
@@ -726,48 +737,29 @@
           "name": "voxel_preview",
           "type": "FILE_3D_GLB",
           "links": [
-            98
+            96
           ]
         },
         {
           "name": "mesh",
           "type": "MESH",
           "links": [
-            99
+            97
           ]
         }
       ],
       "properties": {
-        "proxyWidgets": [
-          [
-            "3",
-            "seed"
-          ],
-          [
-            "3",
-            "steps"
-          ],
-          [
-            "3",
-            "cfg"
-          ],
-          [
-            "18",
-            "seed"
-          ],
-          [
-            "18",
-            "steps"
-          ],
-          [
-            "18",
-            "cfg"
-          ]
-        ],
+        "proxyWidgets": [],
         "cnr_id": "comfy-core",
         "ver": "0.34.5"
       },
-      "widgets_values": []
+      "widgets_values": [
+        false,
+        56,
+        7.5,
+        12,
+        12
+      ]
     },
     {
       "id": 503,
@@ -786,17 +778,33 @@
         {
           "name": "mesh",
           "type": "MESH",
-          "link": 99
+          "link": 97
         },
         {
           "name": "source_image",
           "type": "IMAGE",
-          "link": 102
+          "link": 100
         },
         {
           "name": "use_trellis",
           "type": "BOOLEAN",
-          "link": 110
+          "link": 106
+        },
+        {
+          "name": "target_quads",
+          "type": "INT",
+          "widget": {
+            "name": "target_quads"
+          },
+          "link": null
+        },
+        {
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          },
+          "link": null
         }
       ],
       "outputs": [
@@ -804,44 +812,39 @@
           "name": "quad_preview",
           "type": "FILE_3D_GLB",
           "links": [
-            100
+            98
           ]
         },
         {
           "name": "planar_preview",
           "type": "FILE_3D_GLB",
           "links": [
-            101
+            99
           ]
         },
         {
           "name": "clean_preview",
           "type": "FILE_3D_GLB",
           "links": [
-            103
+            101
           ]
         }
       ],
       "properties": {
-        "proxyWidgets": [
-          [
-            "325",
-            "target_quads"
-          ],
-          [
-            "334",
-            "name"
-          ]
-        ],
+        "proxyWidgets": [],
         "cnr_id": "comfy-core",
         "ver": "0.34.5"
       },
-      "widgets_values": []
+      "widgets_values": [
+        false,
+        5000,
+        "asset"
+      ]
     }
   ],
   "links": [
     [
-      96,
+      94,
       122,
       0,
       501,
@@ -849,7 +852,7 @@
       "IMAGE"
     ],
     [
-      97,
+      95,
       122,
       1,
       501,
@@ -857,7 +860,7 @@
       "MASK"
     ],
     [
-      98,
+      96,
       502,
       0,
       246,
@@ -865,7 +868,7 @@
       "FILE_3D_GLB"
     ],
     [
-      99,
+      97,
       502,
       1,
       503,
@@ -873,7 +876,7 @@
       "MESH"
     ],
     [
-      100,
+      98,
       503,
       0,
       330,
@@ -881,7 +884,7 @@
       "FILE_3D_GLB"
     ],
     [
-      101,
+      99,
       503,
       1,
       332,
@@ -889,7 +892,7 @@
       "FILE_3D_GLB"
     ],
     [
-      102,
+      100,
       122,
       0,
       503,
@@ -897,7 +900,7 @@
       "IMAGE"
     ],
     [
-      103,
+      101,
       503,
       2,
       405,
@@ -905,55 +908,39 @@
       "FILE_3D_GLB"
     ],
     [
-      104,
+      102,
       316,
       0,
       502,
       0,
       "BOOLEAN"
+    ],
+    [
+      103,
+      316,
+      0,
+      501,
+      2,
+      "BOOLEAN"
+    ],
+    [
+      104,
+      501,
+      0,
+      502,
+      1,
+      "CONDITIONING"
     ],
     [
       105,
       501,
-      0,
-      502,
       1,
+      502,
+      2,
       "CONDITIONING"
     ],
     [
       106,
-      501,
-      1,
-      502,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      107,
-      501,
-      2,
-      502,
-      3,
-      "CONDITIONING"
-    ],
-    [
-      108,
-      501,
-      3,
-      502,
-      4,
-      "CONDITIONING"
-    ],
-    [
-      109,
-      316,
-      0,
-      501,
-      2,
-      "BOOLEAN"
-    ],
-    [
-      110,
       316,
       0,
       503,
@@ -961,7 +948,7 @@
       "BOOLEAN"
     ],
     [
-      111,
+      107,
       500,
       0,
       501,
@@ -994,7 +981,7 @@
         "state": {
           "lastGroupId": 0,
           "lastNodeId": 422,
-          "lastLinkId": 90,
+          "lastLinkId": 88,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -1015,7 +1002,7 @@
             900,
             20,
             120,
-            140
+            100
           ]
         },
         "inputs": [
@@ -1051,6 +1038,8 @@
             "name": "use_trellis",
             "type": "BOOLEAN",
             "linkIds": [
+              58,
+              59,
               76
             ],
             "localized_name": "use_trellis",
@@ -1076,12 +1065,12 @@
         "outputs": [
           {
             "id": "4dc5633c-378e-58b9-8178-86ea04aadcfe",
-            "name": "pixal3d_positive",
+            "name": "positive",
             "type": "CONDITIONING",
             "linkIds": [
               87
             ],
-            "localized_name": "pixal3d_positive",
+            "localized_name": "positive",
             "pos": [
               900,
               40
@@ -1089,41 +1078,15 @@
           },
           {
             "id": "aff8da17-3115-5b4c-92a7-2c5dbebc61c0",
-            "name": "trellis_positive",
+            "name": "negative",
             "type": "CONDITIONING",
             "linkIds": [
               88
             ],
-            "localized_name": "trellis_positive",
+            "localized_name": "negative",
             "pos": [
               900,
               60
-            ]
-          },
-          {
-            "id": "757baf6f-73c1-55b3-8f4d-5b7443fe80ac",
-            "name": "pixal3d_negative",
-            "type": "CONDITIONING",
-            "linkIds": [
-              89
-            ],
-            "localized_name": "pixal3d_negative",
-            "pos": [
-              900,
-              80
-            ]
-          },
-          {
-            "id": "bdfe3c86-df92-5069-87b3-5256018fa705",
-            "name": "trellis_negative",
-            "type": "CONDITIONING",
-            "linkIds": [
-              90
-            ],
-            "localized_name": "trellis_negative",
-            "pos": [
-              900,
-              100
             ]
           }
         ],
@@ -1630,14 +1593,14 @@
                 "name": "positive",
                 "type": "CONDITIONING",
                 "links": [
-                  87
+                  62
                 ]
               },
               {
                 "name": "negative",
                 "type": "CONDITIONING",
                 "links": [
-                  89
+                  66
                 ]
               }
             ],
@@ -1684,14 +1647,14 @@
                 "name": "positive",
                 "type": "CONDITIONING",
                 "links": [
-                  88
+                  63
                 ]
               },
               {
                 "name": "negative",
                 "type": "CONDITIONING",
                 "links": [
-                  90
+                  67
                 ]
               }
             ],
@@ -1827,6 +1790,116 @@
             "widgets_values_named": {
               "switch": false
             }
+          },
+          {
+            "id": 314,
+            "type": "ComfySwitchNode",
+            "pos": [
+              2560,
+              560
+            ],
+            "size": [
+              270,
+              110
+            ],
+            "flags": {},
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "on_false",
+                "type": "CONDITIONING",
+                "link": 62
+              },
+              {
+                "name": "on_true",
+                "type": "CONDITIONING",
+                "link": 63
+              },
+              {
+                "name": "switch",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "switch"
+                },
+                "link": 58
+              }
+            ],
+            "outputs": [
+              {
+                "name": "output",
+                "type": "CONDITIONING",
+                "links": [
+                  87
+                ]
+              }
+            ],
+            "title": "Switch: positive",
+            "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.33.0",
+              "Node name for S&R": "ComfySwitchNode"
+            },
+            "widgets_values": [
+              false
+            ],
+            "widgets_values_named": {
+              "switch": false
+            }
+          },
+          {
+            "id": 315,
+            "type": "ComfySwitchNode",
+            "pos": [
+              2560,
+              720
+            ],
+            "size": [
+              270,
+              110
+            ],
+            "flags": {},
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "on_false",
+                "type": "CONDITIONING",
+                "link": 66
+              },
+              {
+                "name": "on_true",
+                "type": "CONDITIONING",
+                "link": 67
+              },
+              {
+                "name": "switch",
+                "type": "BOOLEAN",
+                "widget": {
+                  "name": "switch"
+                },
+                "link": 59
+              }
+            ],
+            "outputs": [
+              {
+                "name": "output",
+                "type": "CONDITIONING",
+                "links": [
+                  88
+                ]
+              }
+            ],
+            "title": "Switch: negative",
+            "properties": {
+              "cnr_id": "comfy-core",
+              "ver": "0.33.0",
+              "Node name for S&R": "ComfySwitchNode"
+            },
+            "widgets_values": [
+              false
+            ],
+            "widgets_values_named": {
+              "switch": false
+            }
           }
         ],
         "groups": [],
@@ -1936,6 +2009,38 @@
             "type": "IMAGE"
           },
           {
+            "id": 62,
+            "origin_id": 298,
+            "origin_slot": 0,
+            "target_id": 314,
+            "target_slot": 0,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 63,
+            "origin_id": 299,
+            "origin_slot": 0,
+            "target_id": 314,
+            "target_slot": 1,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 66,
+            "origin_id": 298,
+            "origin_slot": 1,
+            "target_id": 315,
+            "target_slot": 0,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 67,
+            "origin_id": 299,
+            "origin_slot": 1,
+            "target_id": 315,
+            "target_slot": 1,
+            "type": "CONDITIONING"
+          },
+          {
             "id": 74,
             "origin_id": 420,
             "origin_slot": 0,
@@ -1984,6 +2089,22 @@
             "type": "MASK"
           },
           {
+            "id": 58,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 314,
+            "target_slot": 2,
+            "type": "BOOLEAN"
+          },
+          {
+            "id": 59,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 315,
+            "target_slot": 2,
+            "type": "BOOLEAN"
+          },
+          {
             "id": 76,
             "origin_id": -10,
             "origin_slot": 2,
@@ -2001,7 +2122,7 @@
           },
           {
             "id": 87,
-            "origin_id": 298,
+            "origin_id": 314,
             "origin_slot": 0,
             "target_id": -20,
             "target_slot": 0,
@@ -2009,26 +2130,10 @@
           },
           {
             "id": 88,
-            "origin_id": 299,
+            "origin_id": 315,
             "origin_slot": 0,
             "target_id": -20,
             "target_slot": 1,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 89,
-            "origin_id": 298,
-            "origin_slot": 1,
-            "target_id": -20,
-            "target_slot": 2,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 90,
-            "origin_id": 299,
-            "origin_slot": 1,
-            "target_id": -20,
-            "target_slot": 3,
             "type": "CONDITIONING"
           }
         ],
@@ -2040,7 +2145,7 @@
         "state": {
           "lastGroupId": 0,
           "lastNodeId": 400,
-          "lastLinkId": 92,
+          "lastLinkId": 90,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -2052,7 +2157,7 @@
             -200,
             20,
             120,
-            160
+            200
           ]
         },
         "outputNode": {
@@ -2070,9 +2175,7 @@
             "name": "use_trellis",
             "type": "BOOLEAN",
             "linkIds": [
-              57,
-              58,
-              59
+              57
             ],
             "localized_name": "use_trellis",
             "pos": [
@@ -2082,12 +2185,13 @@
           },
           {
             "id": "66280a72-1e1e-5ab4-8d14-3263b555ba50",
-            "name": "pixal3d_positive",
+            "name": "positive",
             "type": "CONDITIONING",
             "linkIds": [
-              62
+              64,
+              65
             ],
-            "localized_name": "pixal3d_positive",
+            "localized_name": "positive",
             "pos": [
               -100,
               60
@@ -2095,12 +2199,13 @@
           },
           {
             "id": "98c61218-2eed-5de7-9e95-495eb01a1fee",
-            "name": "trellis_positive",
+            "name": "negative",
             "type": "CONDITIONING",
             "linkIds": [
-              63
+              68,
+              69
             ],
-            "localized_name": "trellis_positive",
+            "localized_name": "negative",
             "pos": [
               -100,
               80
@@ -2108,12 +2213,13 @@
           },
           {
             "id": "8a9d8cc1-d93c-5087-906f-af5a7d84f67c",
-            "name": "pixal3d_negative",
-            "type": "CONDITIONING",
+            "name": "seed",
+            "type": "INT",
             "linkIds": [
-              66
+              74,
+              75
             ],
-            "localized_name": "pixal3d_negative",
+            "localized_name": "seed",
             "pos": [
               -100,
               100
@@ -2121,15 +2227,42 @@
           },
           {
             "id": "66b1c934-2fff-5675-96fa-cd3dfa6924f1",
-            "name": "trellis_negative",
-            "type": "CONDITIONING",
+            "name": "cfg",
+            "type": "FLOAT",
             "linkIds": [
-              67
+              76,
+              77
             ],
-            "localized_name": "trellis_negative",
+            "localized_name": "cfg",
             "pos": [
               -100,
               120
+            ]
+          },
+          {
+            "id": "c86dbe68-d3c5-54cd-ad4d-44a3b484fbe0",
+            "name": "structure_steps",
+            "type": "INT",
+            "linkIds": [
+              78
+            ],
+            "localized_name": "structure_steps",
+            "pos": [
+              -100,
+              140
+            ]
+          },
+          {
+            "id": "813ef4b4-4f03-5c2a-b48e-21a799a297db",
+            "name": "shape_steps",
+            "type": "INT",
+            "linkIds": [
+              79
+            ],
+            "localized_name": "shape_steps",
+            "pos": [
+              -100,
+              160
             ]
           }
         ],
@@ -2139,7 +2272,7 @@
             "name": "voxel_preview",
             "type": "FILE_3D_GLB",
             "linkIds": [
-              91
+              89
             ],
             "localized_name": "voxel_preview",
             "pos": [
@@ -2152,7 +2285,7 @@
             "name": "mesh",
             "type": "MESH",
             "linkIds": [
-              92
+              90
             ],
             "localized_name": "mesh",
             "pos": [
@@ -2299,118 +2432,6 @@
               }
             ],
             "title": "Switch: model",
-            "properties": {
-              "cnr_id": "comfy-core",
-              "ver": "0.33.0",
-              "Node name for S&R": "ComfySwitchNode"
-            },
-            "widgets_values": [
-              false
-            ],
-            "widgets_values_named": {
-              "switch": false
-            }
-          },
-          {
-            "id": 314,
-            "type": "ComfySwitchNode",
-            "pos": [
-              2560,
-              560
-            ],
-            "size": [
-              270,
-              110
-            ],
-            "flags": {},
-            "mode": 0,
-            "inputs": [
-              {
-                "name": "on_false",
-                "type": "CONDITIONING",
-                "link": 62
-              },
-              {
-                "name": "on_true",
-                "type": "CONDITIONING",
-                "link": 63
-              },
-              {
-                "name": "switch",
-                "type": "BOOLEAN",
-                "widget": {
-                  "name": "switch"
-                },
-                "link": 58
-              }
-            ],
-            "outputs": [
-              {
-                "name": "output",
-                "type": "CONDITIONING",
-                "links": [
-                  64,
-                  65
-                ]
-              }
-            ],
-            "title": "Switch: positive",
-            "properties": {
-              "cnr_id": "comfy-core",
-              "ver": "0.33.0",
-              "Node name for S&R": "ComfySwitchNode"
-            },
-            "widgets_values": [
-              false
-            ],
-            "widgets_values_named": {
-              "switch": false
-            }
-          },
-          {
-            "id": 315,
-            "type": "ComfySwitchNode",
-            "pos": [
-              2560,
-              720
-            ],
-            "size": [
-              270,
-              110
-            ],
-            "flags": {},
-            "mode": 0,
-            "inputs": [
-              {
-                "name": "on_false",
-                "type": "CONDITIONING",
-                "link": 66
-              },
-              {
-                "name": "on_true",
-                "type": "CONDITIONING",
-                "link": 67
-              },
-              {
-                "name": "switch",
-                "type": "BOOLEAN",
-                "widget": {
-                  "name": "switch"
-                },
-                "link": 59
-              }
-            ],
-            "outputs": [
-              {
-                "name": "output",
-                "type": "CONDITIONING",
-                "links": [
-                  68,
-                  69
-                ]
-              }
-            ],
-            "title": "Switch: negative",
             "properties": {
               "cnr_id": "comfy-core",
               "ver": "0.33.0",
@@ -2703,6 +2724,33 @@
                 "name": "latent_image",
                 "type": "LATENT",
                 "link": 23
+              },
+              {
+                "name": "seed",
+                "type": "INT",
+                "widget": {
+                  "name": "seed"
+                },
+                "link": 74,
+                "localized_name": "seed"
+              },
+              {
+                "name": "cfg",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "cfg"
+                },
+                "link": 76,
+                "localized_name": "cfg"
+              },
+              {
+                "name": "steps",
+                "type": "INT",
+                "widget": {
+                  "name": "steps"
+                },
+                "link": 78,
+                "localized_name": "steps"
               }
             ],
             "outputs": [
@@ -2898,7 +2946,7 @@
                 "name": "model_3d",
                 "type": "FILE_3D_GLB",
                 "links": [
-                  91
+                  89
                 ]
               }
             ],
@@ -3000,6 +3048,33 @@
                 "name": "latent_image",
                 "type": "LATENT",
                 "link": 35
+              },
+              {
+                "name": "seed",
+                "type": "INT",
+                "widget": {
+                  "name": "seed"
+                },
+                "link": 75,
+                "localized_name": "seed"
+              },
+              {
+                "name": "cfg",
+                "type": "FLOAT",
+                "widget": {
+                  "name": "cfg"
+                },
+                "link": 77,
+                "localized_name": "cfg"
+              },
+              {
+                "name": "steps",
+                "type": "INT",
+                "widget": {
+                  "name": "steps"
+                },
+                "link": 79,
+                "localized_name": "steps"
               }
             ],
             "outputs": [
@@ -3017,7 +3092,7 @@
               "Node name for S&R": "KSampler (512)"
             },
             "widgets_values": [
-              42,
+              56,
               "fixed",
               12,
               7.5,
@@ -3026,7 +3101,7 @@
               1
             ],
             "widgets_values_named": {
-              "seed": 42,
+              "seed": 56,
               "control_after_generate": "fixed",
               "steps": 12,
               "cfg": 7.5,
@@ -3141,7 +3216,7 @@
                 "name": "mesh",
                 "type": "MESH",
                 "links": [
-                  92
+                  90
                 ]
               }
             ],
@@ -3308,38 +3383,6 @@
             "type": "MESH"
           },
           {
-            "id": 64,
-            "origin_id": 314,
-            "origin_slot": 0,
-            "target_id": 3,
-            "target_slot": 1,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 65,
-            "origin_id": 314,
-            "origin_slot": 0,
-            "target_id": 91,
-            "target_slot": 0,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 68,
-            "origin_id": 315,
-            "origin_slot": 0,
-            "target_id": 3,
-            "target_slot": 2,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 69,
-            "origin_id": 315,
-            "origin_slot": 0,
-            "target_id": 91,
-            "target_slot": 1,
-            "type": "CONDITIONING"
-          },
-          {
             "id": 70,
             "origin_id": 319,
             "origin_slot": 0,
@@ -3380,55 +3423,39 @@
             "type": "BOOLEAN"
           },
           {
-            "id": 58,
-            "origin_id": -10,
-            "origin_slot": 0,
-            "target_id": 314,
-            "target_slot": 2,
-            "type": "BOOLEAN"
-          },
-          {
-            "id": 59,
-            "origin_id": -10,
-            "origin_slot": 0,
-            "target_id": 315,
-            "target_slot": 2,
-            "type": "BOOLEAN"
-          },
-          {
-            "id": 62,
+            "id": 64,
             "origin_id": -10,
             "origin_slot": 1,
-            "target_id": 314,
+            "target_id": 3,
+            "target_slot": 1,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 65,
+            "origin_id": -10,
+            "origin_slot": 1,
+            "target_id": 91,
             "target_slot": 0,
             "type": "CONDITIONING"
           },
           {
-            "id": 63,
+            "id": 68,
             "origin_id": -10,
             "origin_slot": 2,
-            "target_id": 314,
+            "target_id": 3,
+            "target_slot": 2,
+            "type": "CONDITIONING"
+          },
+          {
+            "id": 69,
+            "origin_id": -10,
+            "origin_slot": 2,
+            "target_id": 91,
             "target_slot": 1,
             "type": "CONDITIONING"
           },
           {
-            "id": 66,
-            "origin_id": -10,
-            "origin_slot": 3,
-            "target_id": 315,
-            "target_slot": 0,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 67,
-            "origin_id": -10,
-            "origin_slot": 4,
-            "target_id": 315,
-            "target_slot": 1,
-            "type": "CONDITIONING"
-          },
-          {
-            "id": 91,
+            "id": 89,
             "origin_id": 247,
             "origin_slot": 0,
             "target_id": -20,
@@ -3436,12 +3463,60 @@
             "type": "FILE_3D_GLB"
           },
           {
-            "id": 92,
+            "id": 90,
             "origin_id": 400,
             "origin_slot": 0,
             "target_id": -20,
             "target_slot": 1,
             "type": "MESH"
+          },
+          {
+            "id": 74,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 3,
+            "target_slot": 4,
+            "type": "INT"
+          },
+          {
+            "id": 75,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 18,
+            "target_slot": 4,
+            "type": "INT"
+          },
+          {
+            "id": 76,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 3,
+            "target_slot": 5,
+            "type": "FLOAT"
+          },
+          {
+            "id": 77,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 18,
+            "target_slot": 5,
+            "type": "FLOAT"
+          },
+          {
+            "id": 78,
+            "origin_id": -10,
+            "origin_slot": 5,
+            "target_id": 3,
+            "target_slot": 6,
+            "type": "INT"
+          },
+          {
+            "id": 79,
+            "origin_id": -10,
+            "origin_slot": 6,
+            "target_id": 18,
+            "target_slot": 6,
+            "type": "INT"
           }
         ],
         "extra": {}
@@ -3452,7 +3527,7 @@
         "state": {
           "lastGroupId": 0,
           "lastNodeId": 428,
-          "lastLinkId": 95,
+          "lastLinkId": 93,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -3464,7 +3539,7 @@
             -200,
             20,
             120,
-            120
+            160
           ]
         },
         "outputNode": {
@@ -3508,13 +3583,38 @@
             "name": "use_trellis",
             "type": "BOOLEAN",
             "linkIds": [
-              80,
               84
             ],
             "localized_name": "use_trellis",
             "pos": [
               -100,
               80
+            ]
+          },
+          {
+            "id": "2bc5d88c-138d-552a-9546-5bc3558dc12d",
+            "name": "target_quads",
+            "type": "INT",
+            "linkIds": [
+              86
+            ],
+            "localized_name": "target_quads",
+            "pos": [
+              -100,
+              100
+            ]
+          },
+          {
+            "id": "9a75a817-1a34-5447-a0c9-05fe2a8053cb",
+            "name": "name",
+            "type": "STRING",
+            "linkIds": [
+              87
+            ],
+            "localized_name": "name",
+            "pos": [
+              -100,
+              120
             ]
           }
         ],
@@ -3524,7 +3624,7 @@
             "name": "quad_preview",
             "type": "FILE_3D_GLB",
             "linkIds": [
-              93
+              91
             ],
             "localized_name": "quad_preview",
             "pos": [
@@ -3537,7 +3637,7 @@
             "name": "planar_preview",
             "type": "FILE_3D_GLB",
             "linkIds": [
-              94
+              92
             ],
             "localized_name": "planar_preview",
             "pos": [
@@ -3550,7 +3650,7 @@
             "name": "clean_preview",
             "type": "FILE_3D_GLB",
             "linkIds": [
-              95
+              93
             ],
             "localized_name": "clean_preview",
             "pos": [
@@ -3651,14 +3751,6 @@
                 "link": 53
               },
               {
-                "name": "voxel_scale",
-                "type": "FLOAT",
-                "widget": {
-                  "name": "voxel_scale"
-                },
-                "link": 81
-              },
-              {
                 "name": "solidify",
                 "type": "FLOAT",
                 "widget": {
@@ -3687,13 +3779,13 @@
               "Node name for S&R": "ManifoldBlenderClean"
             },
             "widgets_values": [
-              3.0,
+              5.5,
               0.01,
               0,
               0.0
             ],
             "widgets_values_named": {
-              "voxel_scale": 3.0,
+              "voxel_scale": 5.5,
               "min_component": 0.01,
               "smooth": 0,
               "solidify": 0.0
@@ -3763,6 +3855,15 @@
                 "name": "mesh",
                 "type": "MANIFOLD_MESH",
                 "link": 42
+              },
+              {
+                "name": "target_quads",
+                "type": "INT",
+                "widget": {
+                  "name": "target_quads"
+                },
+                "link": 86,
+                "localized_name": "target_quads"
               }
             ],
             "outputs": [
@@ -4001,7 +4102,7 @@
                 "name": "model_3d",
                 "type": "FILE_3D_GLB",
                 "links": [
-                  93
+                  91
                 ]
               }
             ],
@@ -4036,7 +4137,7 @@
                 "name": "model_3d",
                 "type": "FILE_3D_GLB",
                 "links": [
-                  94
+                  92
                 ]
               }
             ],
@@ -4070,6 +4171,15 @@
                 "type": "IMAGE",
                 "link": 52,
                 "shape": 7
+              },
+              {
+                "name": "name",
+                "type": "STRING",
+                "widget": {
+                  "name": "name"
+                },
+                "link": 87,
+                "localized_name": "name"
               }
             ],
             "outputs": [
@@ -4115,7 +4225,7 @@
                 "name": "model_3d",
                 "type": "FILE_3D_GLB",
                 "links": [
-                  95
+                  93
                 ]
               }
             ],
@@ -4123,133 +4233,6 @@
               "Node name for S&R": "MeshToFile3D"
             },
             "widgets_values": []
-          },
-          {
-            "id": 423,
-            "type": "PrimitiveFloat",
-            "pos": [
-              0,
-              1300
-            ],
-            "size": [
-              240,
-              60
-            ],
-            "flags": {},
-            "mode": 0,
-            "inputs": [],
-            "outputs": [
-              {
-                "name": "FLOAT",
-                "type": "FLOAT",
-                "links": [
-                  78
-                ]
-              }
-            ],
-            "title": "voxel scale: Pixal3D",
-            "properties": {
-              "cnr_id": "comfy-core",
-              "ver": "0.33.0",
-              "Node name for S&R": "PrimitiveFloat"
-            },
-            "widgets_values": [
-              3.0
-            ],
-            "widgets_values_named": {
-              "value": 3.0
-            }
-          },
-          {
-            "id": 424,
-            "type": "PrimitiveFloat",
-            "pos": [
-              0,
-              1420
-            ],
-            "size": [
-              240,
-              60
-            ],
-            "flags": {},
-            "mode": 0,
-            "inputs": [],
-            "outputs": [
-              {
-                "name": "FLOAT",
-                "type": "FLOAT",
-                "links": [
-                  79
-                ]
-              }
-            ],
-            "title": "voxel scale: TRELLIS.2",
-            "properties": {
-              "cnr_id": "comfy-core",
-              "ver": "0.33.0",
-              "Node name for S&R": "PrimitiveFloat"
-            },
-            "widgets_values": [
-              3.5
-            ],
-            "widgets_values_named": {
-              "value": 3.5
-            }
-          },
-          {
-            "id": 425,
-            "type": "ComfySwitchNode",
-            "pos": [
-              420,
-              1300
-            ],
-            "size": [
-              270,
-              110
-            ],
-            "flags": {},
-            "mode": 0,
-            "inputs": [
-              {
-                "name": "on_false",
-                "type": "FLOAT",
-                "link": 78
-              },
-              {
-                "name": "on_true",
-                "type": "FLOAT",
-                "link": 79
-              },
-              {
-                "name": "switch",
-                "type": "BOOLEAN",
-                "widget": {
-                  "name": "switch"
-                },
-                "link": 80
-              }
-            ],
-            "outputs": [
-              {
-                "name": "output",
-                "type": "FLOAT",
-                "links": [
-                  81
-                ]
-              }
-            ],
-            "title": "Switch: voxel scale",
-            "properties": {
-              "cnr_id": "comfy-core",
-              "ver": "0.33.0",
-              "Node name for S&R": "ComfySwitchNode"
-            },
-            "widgets_values": [
-              false
-            ],
-            "widgets_values_named": {
-              "switch": false
-            }
           },
           {
             "id": 426,
@@ -4478,30 +4461,6 @@
             "type": "MESH"
           },
           {
-            "id": 78,
-            "origin_id": 423,
-            "origin_slot": 0,
-            "target_id": 425,
-            "target_slot": 0,
-            "type": "FLOAT"
-          },
-          {
-            "id": 79,
-            "origin_id": 424,
-            "origin_slot": 0,
-            "target_id": 425,
-            "target_slot": 1,
-            "type": "FLOAT"
-          },
-          {
-            "id": 81,
-            "origin_id": 425,
-            "origin_slot": 0,
-            "target_id": 403,
-            "target_slot": 1,
-            "type": "FLOAT"
-          },
-          {
             "id": 82,
             "origin_id": 426,
             "origin_slot": 0,
@@ -4522,7 +4481,7 @@
             "origin_id": 428,
             "origin_slot": 0,
             "target_id": 403,
-            "target_slot": 2,
+            "target_slot": 1,
             "type": "FLOAT"
           },
           {
@@ -4542,14 +4501,6 @@
             "type": "IMAGE"
           },
           {
-            "id": 80,
-            "origin_id": -10,
-            "origin_slot": 2,
-            "target_id": 425,
-            "target_slot": 2,
-            "type": "BOOLEAN"
-          },
-          {
             "id": 84,
             "origin_id": -10,
             "origin_slot": 2,
@@ -4558,7 +4509,7 @@
             "type": "BOOLEAN"
           },
           {
-            "id": 93,
+            "id": 91,
             "origin_id": 329,
             "origin_slot": 0,
             "target_id": -20,
@@ -4566,7 +4517,7 @@
             "type": "FILE_3D_GLB"
           },
           {
-            "id": 94,
+            "id": 92,
             "origin_id": 331,
             "origin_slot": 0,
             "target_id": -20,
@@ -4574,12 +4525,28 @@
             "type": "FILE_3D_GLB"
           },
           {
-            "id": 95,
+            "id": 93,
             "origin_id": 404,
             "origin_slot": 0,
             "target_id": -20,
             "target_slot": 2,
             "type": "FILE_3D_GLB"
+          },
+          {
+            "id": 86,
+            "origin_id": -10,
+            "origin_slot": 3,
+            "target_id": 325,
+            "target_slot": 1,
+            "type": "INT"
+          },
+          {
+            "id": 87,
+            "origin_id": -10,
+            "origin_slot": 4,
+            "target_id": 334,
+            "target_slot": 2,
+            "type": "STRING"
           }
         ],
         "extra": {}
