@@ -7,7 +7,7 @@ ComfyUI nodes for clean, game-ready topology from image-to-3D meshes. Native Pix
 1. Comfy Desktop with core 0.34+, Blender 5.2+, AutoRemesher 1.2+.
 2. `./scripts/link.sh` (symlinks into custom_nodes, copies manifold.toml.example to manifold.toml). Edit paths if needed.
 3. `./scripts/download_weights.sh` on real bandwidth, about 14 GB into `~/ComfyUI-Shared/models`.
-4. Open `workflows/manifold-pixal3d.json`. `workflows/retopo-only.json` runs without weights from any glb, fbx, obj or stl in `~/ComfyUI-Shared/input/3d/`.
+4. Open `workflows/manifold.json`. The "Use TRELLIS.2" boolean switches generation between Pixal3D (default, false) and TRELLIS.2; the unselected model never loads. `workflows/retopo-only.json` runs without weights from any glb, fbx, obj or stl in `~/ComfyUI-Shared/input/3d/`.
 
 ## Nodes
 
